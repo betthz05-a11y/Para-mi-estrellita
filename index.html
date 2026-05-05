@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para mi estrellita ✨</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(#0f2027, #203a43, #2c5364);
+    color: white;
+    text-align: center;
+}
+
+.contenido {
+    position: relative;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+h1 {
+    font-size: 28px;
+}
+
+.texto {
+    font-size: 20px;
+    margin: 20px;
+}
+
+/* ❤️ Corazón animado */
+.corazon {
+    width: 100px;
+    height: 100px;
+    background: red;
+    position: relative;
+    margin: 30px auto;
+    transform: rotate(-45deg);
+    animation: latido 1s infinite;
+}
+
+.corazon::before,
+.corazon::after {
+    content: "";
+    width: 100px;
+    height: 100px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.corazon::before {
+    top: -50px;
+    left: 0;
+}
+
+.corazon::after {
+    left: 50px;
+    top: 0;
+}
+
+@keyframes latido {
+    0% { transform: scale(1) rotate(-45deg); }
+    50% { transform: scale(1.2) rotate(-45deg); }
+    100% { transform: scale(1) rotate(-45deg); }
+}
+
+.timer {
+    font-size: 22px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* ✨ Canvas partículas */
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="contenido">
+    <h1>Para mi estrellita ✨</h1>
+
+    <div class="texto">
+        Si pudiera elegir un lugar seguro, sería a tu lado.<br>
+        Cuanto más tiempo estoy contigo más te amo.
+    </div>
+
+    <div class="corazon"></div>
+
+    <div class="timer" id="contador"></div>
+</div>
+
+<script>
+// ⏱️ FECHA EXACTA
+const fechaInicio = new Date("2026-02-27T00:00:00");
+
+function actualizarContador() {
+    const ahora = new Date();
+    let diff = ahora - fechaInicio;
+
+    let segundos = Math.floor(diff / 1000);
+    let minutos = Math.floor(segundos / 60);
+    let horas = Math.floor(minutos / 60);
+    let dias = Math.floor(horas / 24);
+
+    horas %= 24;
+    minutos %= 60;
+    segundos %= 60;
+
+    document.getElementById("contador").innerHTML =
+        `Mi amor por ti comenzó hace...<br>
+        ${dias} días ${horas} horas ${minutos} minutos ${segundos} segundos 💖`;
+}
+
+setInterval(actualizarContador, 1000);
+
+// ✨ PARTICULAS
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = [];
+
+for (let i = 0; i < 120; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        d: Math.random() * 1 + 0.5
+    });
+}
+
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+
+    for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    moveParticles();
+}
+
+function moveParticles() {
+    for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.y += p.d;
+
+        if (p.y > canvas.height) {
+            p.y = 0;
+            p.x = Math.random() * canvas.width;
+        }
+    }
+}
+
+setInterval(drawParticles, 33);
+</script>
+
+</body>
+</html>

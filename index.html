@@ -6,87 +6,110 @@
 <title>Para mi estrellita ✨</title>
 
 <style>
-body {
+* {
     margin: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(#0f2027, #203a43, #2c5364);
-    color: white;
-    text-align: center;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+    text-align: center;
+    background: radial-gradient(circle at bottom, #1b2735, #090a0f);
+}
+
+/* CONTENEDOR */
 .contenido {
     position: relative;
     z-index: 2;
-    top: 50%;
-    transform: translateY(-50%);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
+/* TEXTO */
 h1 {
-    font-size: 28px;
+    font-size: 32px;
+    margin-bottom: 10px;
 }
 
 .texto {
     font-size: 20px;
-    margin: 20px;
+    max-width: 500px;
+    margin: 15px;
+    line-height: 1.5;
 }
 
-/* ❤️ Corazón animado */
+/* ❤️ CORAZÓN PRO */
 .corazon {
-    width: 100px;
-    height: 100px;
-    background: red;
     position: relative;
-    margin: 30px auto;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #ff0000, #ff4d6d);
     transform: rotate(-45deg);
-    animation: latido 1s infinite;
+    margin: 30px 0;
+    animation: latido 1.2s infinite;
+    box-shadow: 0 0 25px rgba(255,0,0,0.7);
 }
 
 .corazon::before,
 .corazon::after {
     content: "";
-    width: 100px;
-    height: 100px;
-    background: red;
-    border-radius: 50%;
     position: absolute;
+    width: 120px;
+    height: 120px;
+    background: inherit;
+    border-radius: 50%;
 }
 
 .corazon::before {
-    top: -50px;
+    top: -60px;
     left: 0;
 }
 
 .corazon::after {
-    left: 50px;
+    left: 60px;
     top: 0;
 }
 
 @keyframes latido {
-    0% { transform: scale(1) rotate(-45deg); }
-    50% { transform: scale(1.2) rotate(-45deg); }
-    100% { transform: scale(1) rotate(-45deg); }
+    0%,100% { transform: scale(1) rotate(-45deg); }
+    50% { transform: scale(1.15) rotate(-45deg); }
 }
 
+/* CONTADOR */
 .timer {
     font-size: 22px;
-    margin-top: 20px;
+    margin-top: 10px;
     font-weight: bold;
 }
 
-/* ✨ Canvas partículas */
+/* ✨ CANVAS */
 canvas {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
 }
+
+/* RESPONSIVE */
+@media(max-width: 500px){
+    h1 { font-size: 26px; }
+    .texto { font-size: 18px; }
+    .corazon { width: 90px; height: 90px; }
+}
 </style>
 </head>
 
 <body>
 
-<canvas id="particles"></canvas>
+<canvas id="stars"></canvas>
 
 <div class="contenido">
     <h1>Para mi estrellita ✨</h1>
@@ -102,9 +125,10 @@ canvas {
 </div>
 
 <script>
-// ⏱️ FECHA EXACTA
+// 📅 FECHA
 const fechaInicio = new Date("2026-02-27T00:00:00");
 
+// ⏱️ CONTADOR
 function actualizarContador() {
     const ahora = new Date();
     let diff = ahora - fechaInicio;
@@ -125,55 +149,52 @@ function actualizarContador() {
 
 setInterval(actualizarContador, 1000);
 
-// ✨ PARTICULAS
-const canvas = document.getElementById("particles");
+// ✨ ESTRELLAS PRO
+const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-function resizeCanvas() {
+function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+resize();
+window.addEventListener("resize", resize);
 
-let particles = [];
+let estrellas = [];
 
-for (let i = 0; i < 120; i++) {
-    particles.push({
+for (let i = 0; i < 150; i++) {
+    estrellas.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 1,
-        d: Math.random() * 1 + 0.5
+        r: Math.random() * 1.5,
+        d: Math.random() * 0.5,
+        alpha: Math.random()
     });
 }
 
-function drawParticles() {
+function dibujar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
 
-    for (let i = 0; i < particles.length; i++) {
-        let p = particles[i];
+    for (let i = 0; i < estrellas.length; i++) {
+        let s = estrellas[i];
+
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
         ctx.fill();
-    }
 
-    moveParticles();
-}
+        s.y += s.d;
 
-function moveParticles() {
-    for (let i = 0; i < particles.length; i++) {
-        let p = particles[i];
-        p.y += p.d;
-
-        if (p.y > canvas.height) {
-            p.y = 0;
-            p.x = Math.random() * canvas.width;
+        if (s.y > canvas.height) {
+            s.y = 0;
+            s.x = Math.random() * canvas.width;
         }
     }
+
+    requestAnimationFrame(dibujar);
 }
 
-setInterval(drawParticles, 33);
+dibujar();
 </script>
 
 </body>
